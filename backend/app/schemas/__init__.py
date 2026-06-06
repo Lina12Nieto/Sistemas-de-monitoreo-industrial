@@ -1,33 +1,4 @@
-from app.schemas.schemas import (
-    SensorBase,
-    SensorCreate,
-    SensorResponse,
-    ZoneBase,
-    ZoneCreate,
-    ZoneResponse,
-    ZoneDetailResponse,
-    MonitoringBase,
-    MonitoringCreate,
-    MonitoringUpdate,
-    MonitoringResponse,
-    MonitoringDetailResponse,
-    SensorWithZonesResponse,
-    ErrorResponse,
-)
-
-__all__ = [
-    "SensorBase",
-    "SensorCreate",
-    "SensorResponse",
-    "ZoneBase",
-    "ZoneCreate",
-    "ZoneResponse",
-    "ZoneDetailResponse",
-    "MonitoringBase",
-    "MonitoringCreate",
-    "MonitoringUpdate",
-    "MonitoringResponse",
-    "MonitoringDetailResponse",
-    "SensorWithZonesResponse",
-    "ErrorResponse",
-]
+from app.schemas.sensor import SensorCreate, SensorResponse
+from app.schemas.zone import ZoneCreate, ZoneResponse, ZoneWithActiveSensorsResponse
+from app.schemas.monitoring import MonitoringCreate, MonitoringUpdate, MonitoringResponse, MonitoringDetailResponse
+from app.schemas.error import ErrorResponse

@@ -1,29 +1,3 @@
-from app.services.services import (
-    get_all_sensors,
-    get_sensor_by_id,
-    create_sensor,
-    get_all_zones,
-    get_zone_by_id,
-    get_active_sensors_in_zone,
-    count_active_sensors_in_zone,
-    get_all_monitorings,
-    get_monitoring_by_id,
-    create_monitoring,
-    update_monitoring,
-    get_zones_by_sensor,
-)
-
-__all__ = [
-    "get_all_sensors",
-    "get_sensor_by_id",
-    "create_sensor",
-    "get_all_zones",
-    "get_zone_by_id",
-    "get_active_sensors_in_zone",
-    "count_active_sensors_in_zone",
-    "get_all_monitorings",
-    "get_monitoring_by_id",
-    "create_monitoring",
-    "update_monitoring",
-    "get_zones_by_sensor",
-]
+from app.services.sensor_service import get_all_sensors, get_sensor_by_id, get_zones_by_sensor
+from app.services.zone_service import get_all_zones, get_zone_by_id, get_active_sensors_in_zone, count_active_sensors_in_zone
+from app.services.monitoring_service import get_all_monitorings, get_monitoring_by_id, create_monitoring, update_monitoring
