@@ -12,7 +12,7 @@ class MonitoringCreate(BaseModel):
     installation_date: date
     reading_type: ReadingTypeEnum
     threshold_value: Decimal = Field(..., max_digits=10, decimal_places=2)
-    status: Optional[MonitoringStatusEnum] = MonitoringStatusEnum.ACTIVO
+    status: Optional[MonitoringStatusEnum] = MonitoringStatusEnum.activo
 
 class MonitoringUpdate(BaseModel):
     threshold_value: Optional[Decimal] = Field(None, max_digits=10, decimal_places=2)

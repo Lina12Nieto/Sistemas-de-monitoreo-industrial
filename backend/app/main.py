@@ -1,5 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.database import Base, engine
+from app.routers import sensors, zones, monitorings
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Sistema de Monitoreo Industrial",
@@ -14,6 +18,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(sensors.router)
+app.include_router(zones.router)
+app.include_router(monitorings.router)
 
 @app.get("/")
 def root():

@@ -14,7 +14,7 @@ class Zone(Base):
     name = Column(String(100), nullable=False)
     description = Column(String, nullable=True)
     location = Column(String(150), nullable=False)
-    operational_status = Column(Enum(ZoneStatusEnum), nullable=False, default=ZoneStatusEnum.OPERACIONAL)
+    operational_status = Column(Enum(ZoneStatusEnum), nullable=False, default=ZoneStatusEnum.operacional)
     created_at = Column(DateTime, nullable=False, default=func.now())
 
     monitorings = relationship("Monitoring", back_populates="zone", cascade="all, delete-orphan")

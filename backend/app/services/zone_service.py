@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 from fastapi import HTTPException, status
+from app.schemas import ZoneCreate
 from app.models import Zone, Monitoring, MonitoringStatusEnum
 
 def get_all_zones(db: Session):
@@ -23,7 +24,7 @@ def get_active_sensors_in_zone(db: Session, zone_id: int):
     return db.query(Monitoring).filter(
         and_(
             Monitoring.zone_id == zone_id,
-            Monitoring.status == MonitoringStatusEnum.ACTIVO
+            Monitoring.status == MonitoringStatusEnum.activo
         )
     ).all()
 
@@ -32,6 +33,14 @@ def count_active_sensors_in_zone(db: Session, zone_id: int) -> int:
     return db.query(Monitoring).filter(
         and_(
             Monitoring.zone_id == zone_id,
-            Monitoring.status == MonitoringStatusEnum.ACTIVO
+            Monitoring.status == MonitoringStatusEnum.activo
         )
     ).count()
+
+def create_zone(db: Session, zone_data: ZoneCreate):
+    """Crea una nueva zona"""
+    db_zone = Zone(**zone_data.dict())
+    db.add(db_zone)
+    db.commit()
+    db.refresh(db_zone)
+    return db_zone

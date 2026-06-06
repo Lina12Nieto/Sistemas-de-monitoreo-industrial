@@ -1,22 +1,22 @@
 import enum
 
 class SensorTypeEnum(str, enum.Enum):
-    TEMPERATURA = "temperatura"
-    PRESION = "presion"
-    VIBRACION = "vibracion"
-    FLUJO = "flujo"
+    temperatura = "temperatura"
+    presion = "presion"
+    vibracion = "vibracion"
+    flujo = "flujo"
 
 class ReadingTypeEnum(str, enum.Enum):
-    TEMPERATURA = "temperatura"
-    PRESION = "presion"
-    VIBRACION = "vibracion"
-    FLUJO = "flujo"
+    temperatura = "temperatura"
+    presion = "presion"
+    vibracion = "vibracion"
+    flujo = "flujo"
 
 class MonitoringStatusEnum(str, enum.Enum):
-    ACTIVO = "activo"
-    PAUSADO = "pausado"
+    activo = "activo"
+    pausado = "pausado"
 
 class ZoneStatusEnum(str, enum.Enum):
-    OPERACIONAL = "operacional"
-    MANTENIMIENTO = "mantenimiento"
-    INACTIVO = "inactivo"
+    operacional = "operacional"
+    mantenimiento = "mantenimiento"
+    inactivo = "inactivo"

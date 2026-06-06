@@ -17,7 +17,7 @@ class Monitoring(Base):
     reading_type = Column(Enum(ReadingTypeEnum), nullable=False)
     threshold_value = Column(Numeric(10, 2), nullable=False)
     current_value = Column(Numeric(10, 2), nullable=False, default=0)
-    status = Column(Enum(MonitoringStatusEnum), nullable=False, default=MonitoringStatusEnum.ACTIVO)
+    status = Column(Enum(MonitoringStatusEnum), nullable=False, default=MonitoringStatusEnum.activo)
     created_at = Column(DateTime, nullable=False, default=func.now())
     updated_at = Column(DateTime, nullable=False, default=func.now(), onupdate=func.now())
 

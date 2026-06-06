@@ -23,3 +23,11 @@ def get_zones_by_sensor(db: Session, sensor_id: int):
     return db.query(Monitoring).filter(
         Monitoring.sensor_id == sensor_id
     ).all()
+
+def create_sensor(db: Session, sensor_data: SensorCreate):
+    """Crea un nuevo sensor"""
+    db_sensor = Sensor(**sensor_data.dict())
+    db.add(db_sensor)
+    db.commit()
+    db.refresh(db_sensor)
+    return db_sensor
