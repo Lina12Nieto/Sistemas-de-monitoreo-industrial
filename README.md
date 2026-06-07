@@ -93,7 +93,7 @@ Opcional para cargar el archivo `schema.sql` en Render desde terminal:
 Clona el repositorio y entra a la carpeta principal:
 
 ```bash
-git clone <https://github.com/Lina12Nieto/Sistemas-de-monitoreo-industrial.git>
+git clone https://github.com/Lina12Nieto/Sistemas-de-monitoreo-industrial.git
 cd Sistemas-de-monitoreo-industrial
 ```
 
@@ -267,7 +267,7 @@ cp .env.example .env
 Edita `frontend/.env` y confirma que apunte al backend local:
 
 ```env
-VITE_API_URL=http://
+VITE_API_URL=http://localhost:8000
 ```
 
 ### 3. Iniciar servidor de desarrollo Git Bash
@@ -323,7 +323,7 @@ DATABASE_URL=postgresql://usuario:password@host-render:5432/nombre_db?sslmode=re
 Archivo: `frontend/.env`
 
 ```env
-VITE_API_URL=http://127.0.0.1:8000
+VITE_API_URL=http://localhost:8000
 ```
 
 
