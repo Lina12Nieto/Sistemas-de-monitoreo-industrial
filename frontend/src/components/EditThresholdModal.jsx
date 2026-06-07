@@ -16,6 +16,7 @@ function EditThresholdModal({ monitoring, onClose, onUpdated }) {
   const [error,   setError]   = useState(null)
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
+  const isPaused = form.status === 'pausado'
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -92,34 +93,47 @@ function EditThresholdModal({ monitoring, onClose, onUpdated }) {
         {/* Body */}
         <div className="px-6 py-5 flex flex-col gap-4">
           <div>
-            <label className={labelClass}>Valor umbral *</label>
+            <label className={labelClass}>
+              Valor umbral *
+              {isPaused && <span className="ml-2 text-yellow-500 font-normal">— bloqueado mientras está pausado</span>}
+            </label>
             <input
               type="number"
               name="threshold_value"
               value={form.threshold_value}
               onChange={handleChange}
-              className={inputClass}
+              className={`${inputClass} ${isPaused ? 'bg-gray-50 text-gray-300 cursor-not-allowed' : ''}`}
               step="0.01"
               min="0"
               placeholder="Ej: 85.00"
+              disabled={isPaused}
             />
             <p className="text-xs text-gray-400 mt-1">Valor máximo permitido para este tipo de lectura</p>
           </div>
 
           <div>
-            <label className={labelClass}>Valor actual <span className="text-gray-300">(opcional)</span></label>
+            <label className={labelClass}>
+              Valor actual <span className="text-gray-300">(opcional)</span>
+              {isPaused && <span className="ml-2 text-yellow-500 font-normal">— bloqueado mientras está pausado</span>}
+            </label>
             <input
               type="number"
               name="current_value"
               value={form.current_value}
               onChange={handleChange}
-              className={inputClass}
+              className={`${inputClass} ${isPaused ? 'bg-gray-50 text-gray-300 cursor-not-allowed' : ''}`}
               step="0.01"
               placeholder="Ej: 72.50"
+              disabled={isPaused}
             />
             <p className="text-xs text-gray-400 mt-1">Última lectura registrada por el sensor</p>
           </div>
-
+          {isPaused && (
+            <div className="flex items-center gap-2 bg-yellow-50 border border-yellow-200 text-yellow-700 rounded-lg px-3 py-2 text-xs">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Activa el monitoreo primero para poder modificar el umbral y el valor actual
+            </div>
+          )}
           <div>
             <label className={labelClass}>Estado del monitoreo</label>
             <div className="flex gap-2">

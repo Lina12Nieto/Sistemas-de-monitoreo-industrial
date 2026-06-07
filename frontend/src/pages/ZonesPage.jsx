@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getZones, getMonitorings } from '../services/api'
+import { getZones, getMonitorings, deleteZone } from '../services/api'
 import { MapPin, Cpu, ChevronRight, AlertTriangle, Plus } from 'lucide-react'
 import CreateZoneModal from '../components/CreateZoneModal'
+import ConfirmModal from '../components/ConfirmModal'
 
 function ZonesPage() {
   const [zones, setZones] = useState([])
@@ -11,6 +12,7 @@ function ZonesPage() {
   const [error, setError] = useState(null)
   const [showModal, setShowModal] = useState(false)
   const navigate = useNavigate()
+  const [toDelete, setToDelete] = useState(null)
 
   useEffect(() => {
     Promise.all([getZones(), getMonitorings()])
@@ -27,6 +29,17 @@ function ZonesPage() {
 
   const handleZoneCreated = (newZone) => {
     setZones(prev => [...prev, { ...newZone, active_sensors_count: 0 }])
+  }
+  const handleDelete = async () => {
+    try {
+      await deleteZone(toDelete.id)
+      setZones(prev => prev.filter(z => z.id !== toDelete.id))
+      setAlertZones(prev => { prev.delete(toDelete.id); return new Set(prev) })
+    } catch {
+      setError('Error al eliminar la zona')
+    } finally {
+      setToDelete(null)
+    }
   }
 
   if (loading) return (
@@ -114,7 +127,16 @@ function ZonesPage() {
                     <p className="text-xs text-gray-400">{zone.location}</p>
                   </div>
                 </div>
+                <div className="flex items-center gap-1">
+                <button
+                  onClick={(e) => { e.stopPropagation(); setToDelete(zone) }}
+                  className="p-1.5 text-red-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                  title="Eliminar zona"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                </button>
                 <ChevronRight size={16} className="text-gray-300 mt-1 group-hover:text-blue-400 transition-colors" />
+              </div>
               </div>
 
               {zone.description && (
@@ -145,10 +167,19 @@ function ZonesPage() {
                 </div>
               </div>
             </div>
+            
           )
         })}
+        {toDelete && (
+          <ConfirmModal
+            title="¿Eliminar zona?"
+            message={`La zona "${toDelete.name}" y todos sus monitoreos asociados serán eliminados permanentemente.`}
+            confirmText="Sí, eliminar"
+            onConfirm={handleDelete}
+            onCancel={() => setToDelete(null)}
+          />
+        )}
       </div>
-
       {showModal && (
         <CreateZoneModal onClose={() => setShowModal(false)} onCreated={handleZoneCreated} />
       )}

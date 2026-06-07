@@ -46,10 +46,10 @@ function SensorCard({ monitoring, onEdit, onDelete }) {
           <StatusBadge status={status} />
           <button
             onClick={handleDelete}
-            className="p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+            className="p-1.5 text-red-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
             title="Eliminar sensor de la zona"
           >
-            <Trash2 size={14} />
+            <Trash2 size={20} />
           </button>
         </div>
       </div>
