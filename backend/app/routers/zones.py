@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas import ZoneResponse, ZoneWithActiveSensorsResponse, ZoneCreate
 from app.schemas.monitoring import MonitoringDetailResponse
-from app.services import get_all_zones, get_zone_by_id, get_active_sensors_in_zone, count_active_sensors_in_zone, create_zone, get_sensors_in_zone 
+from app.services import get_all_zones, get_zone_by_id, get_active_sensors_in_zone, count_active_sensors_in_zone, create_zone, get_sensors_in_zone, delete_zone 
 
 router = APIRouter(prefix="/zones", tags=["Zones"])
 
@@ -37,3 +37,8 @@ def create_zone_endpoint(
 ):
     """Crear una nueva zona"""
     return create_zone(db, zone_data)
+
+@router.delete("/{zone_id}", status_code=200)
+def delete_zone_endpoint(zone_id: int, db: Session = Depends(get_db)):
+    """Eliminar una zona"""
+    return delete_zone(db, zone_id)

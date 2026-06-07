@@ -61,3 +61,10 @@ def create_zone(db: Session, zone_data: ZoneCreate):
     db.commit()
     db.refresh(db_zone)
     return db_zone
+
+def delete_zone(db: Session, zone_id: int):
+    """Elimina una zona"""
+    zone = get_zone_by_id(db, zone_id)
+    db.delete(zone)
+    db.commit()
+    return {"message": f"Zona con id {zone_id} eliminada correctamente"}

@@ -43,3 +43,11 @@ def create_sensor(db: Session, sensor_data: SensorCreate):
     db.commit()
     db.refresh(db_sensor)
     return db_sensor
+
+
+def delete_sensor(db: Session, sensor_id: int):
+    """Elimina un sensor"""
+    sensor = get_sensor_by_id(db, sensor_id)
+    db.delete(sensor)
+    db.commit()
+    return {"message": f"Sensor con id {sensor_id} eliminado correctamente"}

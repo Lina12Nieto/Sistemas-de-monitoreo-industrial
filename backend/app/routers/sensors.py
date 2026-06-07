@@ -24,3 +24,8 @@ def create_sensor_endpoint(
 ):
     """Crear un nuevo sensor"""
     return create_sensor(db, sensor_data)
+
+@router.delete("/{sensor_id}", status_code=200)
+def delete_sensor_endpoint(sensor_id: int, db: Session = Depends(get_db)):
+    """Eliminar un sensor"""
+    return delete_sensor(db, sensor_id)
