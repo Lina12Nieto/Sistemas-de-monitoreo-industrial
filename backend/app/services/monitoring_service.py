@@ -80,3 +80,9 @@ def update_monitoring(db: Session, monitoring_id: int, update_data: MonitoringUp
     db.commit()
     db.refresh(monitoring)
     return monitoring
+
+def delete_monitoring(db: Session, monitoring_id: int):
+    monitoring = get_monitoring_by_id(db, monitoring_id)
+    db.delete(monitoring)
+    db.commit()
+    return {"message": f"Monitoreo con id {monitoring_id} eliminado correctamente"}

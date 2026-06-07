@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { getZoneById } from '../services/api'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import { getZoneById, deleteMonitoring  } from '../services/api'
 import SensorCard from '../components/SensorCard'
 import EditThresholdModal from '../components/EditThresholdModal'
 import AssignSensorModal from '../components/AssignSensorModal'
 import { ArrowLeft, MapPin, AlertTriangle, Plus } from 'lucide-react'
+
 
 function ZoneDetailPage() {
   const { id } = useParams()
@@ -14,6 +15,8 @@ function ZoneDetailPage() {
   const [error, setError]               = useState(null)
   const [selected, setSelected]         = useState(null)  
   const [showAssign, setShowAssign]     = useState(false) 
+  const location = useLocation()
+  const [zone, setZone] = useState(location.state?.zone || null)
 
   useEffect(() => {
     getZoneById(id)
@@ -29,9 +32,17 @@ function ZoneDetailPage() {
   const handleAssigned = (newMonitoring) => {
     setMonitorings(prev => [...prev, newMonitoring])
   }
+  
+  const handleDeleted = async (monitoringId) => {
+    try {
+      await deleteMonitoring(monitoringId)
+      setMonitorings(prev => prev.filter(m => m.id !== monitoringId))
+    } catch {
+      alert('Error al eliminar el sensor de la zona')
+    }
+  }
 
   const alerts = monitorings.filter(m => m.is_alert)
-  const zone   = monitorings[0]?.zone
 
   if (loading) return (
     <div className="flex justify-center items-center h-64">
@@ -98,8 +109,8 @@ function ZoneDetailPage() {
       </div>
 
       {monitorings.length === 0 ? (
-        <div className="text-center py-12 text-gray-400 text-sm">
-          No hay sensores asignados a esta zona
+        <div className="text-center py-12">
+          <p className="text-gray-400 text-sm mb-4">No hay sensores asignados a esta zona</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -108,6 +119,7 @@ function ZoneDetailPage() {
               key={monitoring.id}
               monitoring={monitoring}
               onEdit={() => setSelected(monitoring)}
+              onDelete={handleDeleted}
             />
           ))}
         </div>

@@ -1,6 +1,8 @@
 import StatusBadge from './StatusBadge'
-import AlertIndicator from './AlertIndicator'
-import { Cpu, Calendar, RefreshCw, SlidersHorizontal } from 'lucide-react'
+import { Cpu, Calendar, RefreshCw, SlidersHorizontal, Trash2, AlertTriangle, CheckCircle } from 'lucide-react'
+import { useState } from 'react'
+import ConfirmModal from './ConfirmModal'
+
 
 const UNITS = {
   temperatura: '°C',
@@ -9,11 +11,13 @@ const UNITS = {
   flujo: 'L/min'
 }
 
-function SensorCard({ monitoring, onEdit }) {
+function SensorCard({ monitoring, onEdit, onDelete }) {
   const { sensor, reading_type, threshold_value, current_value, status, is_alert, installation_date, updated_at } = monitoring
 
   const unit = UNITS[reading_type] || ''
 
+  const [showConfirm, setShowConfirm] = useState(false)
+  
   const formatDate = (dateStr) => {
     if (!dateStr) return '—'
     return new Date(dateStr).toLocaleDateString('es-CO', {
@@ -21,6 +25,7 @@ function SensorCard({ monitoring, onEdit }) {
       hour: '2-digit', minute: '2-digit'
     })
   }
+  const handleDelete = () => setShowConfirm(true)
 
   return (
     <div className={`bg-white rounded-xl border p-4 shadow-sm transition-all ${
@@ -37,23 +42,46 @@ function SensorCard({ monitoring, onEdit }) {
             <p className="text-xs text-gray-400">{sensor.manufacturer}</p>
           </div>
         </div>
-        <StatusBadge status={status} />
+        <div className="flex items-center gap-2">
+          <StatusBadge status={status} />
+          <button
+            onClick={handleDelete}
+            className="p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+            title="Eliminar sensor de la zona"
+          >
+            <Trash2 size={14} />
+          </button>
+        </div>
       </div>
 
-      {/* Tipo de lectura y unidad */}
+      {/* Tipo de lectura */}
       <div className="mb-3">
         <span className="text-xs text-gray-400 block mb-0.5">Tipo de lectura</span>
         <span className="text-sm font-medium text-gray-700 capitalize">
           {reading_type} <span className="text-gray-400 text-xs">({unit})</span>
         </span>
       </div>
-
-      {/* Valor actual vs umbral */}
-      <AlertIndicator
-        currentValue={`${current_value} ${unit}`}
-        thresholdValue={`${threshold_value} ${unit}`}
-        isAlert={is_alert}
-      />
+      {/* Valores grandes estilo dashboard */}
+      <div className="grid grid-cols-2 gap-4 mb-1">
+        <div>
+          <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Valor actual</p>
+          <p className={`text-2xl font-bold tracking-tight ${is_alert ? 'text-red-600' : 'text-gray-800'}`}>
+            {parseFloat(current_value).toLocaleString('es-CO')}
+            <span className="text-sm font-normal text-gray-400 ml-1">{unit}</span>
+          </p>
+          {is_alert
+            ? <div className="flex items-center gap-1 mt-1"><AlertTriangle size={11} className="text-red-500" /><span className="text-xs text-red-500 font-medium">Fuera de umbral</span></div>
+            : <div className="flex items-center gap-1 mt-1"><CheckCircle size={11} className="text-green-500" /><span className="text-xs text-green-500 font-medium">Normal</span></div>
+          }
+        </div>
+        <div>
+          <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Umbral máx.</p>
+          <p className="text-2xl font-bold tracking-tight text-gray-300">
+            {parseFloat(threshold_value).toLocaleString('es-CO')}
+            <span className="text-sm font-normal text-gray-300 ml-1">{unit}</span>
+          </p>
+        </div>
+      </div>
 
       {/* Fechas */}
       <div className="mt-3 pt-3 border-t border-gray-100 grid grid-cols-2 gap-2">
@@ -82,6 +110,18 @@ function SensorCard({ monitoring, onEdit }) {
           <SlidersHorizontal size={13} />
           Editar umbral
         </button>
+      )}
+      {showConfirm && (
+        <ConfirmModal
+          title="¿Eliminar sensor de la zona?"
+          message={`El sensor ${sensor.name} será desvinculado de esta zona. Esta acción no se puede deshacer.`}
+          confirmText="Sí, eliminar"
+          onConfirm={() => {
+            setShowConfirm(false)
+            onDelete && onDelete(monitoring.id)
+          }}
+          onCancel={() => setShowConfirm(false)}
+        />
       )}
     </div>
   )

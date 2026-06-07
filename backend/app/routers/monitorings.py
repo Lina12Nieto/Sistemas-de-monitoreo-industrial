@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from app.database import get_db
 from app.schemas.monitoring import MonitoringCreate, MonitoringUpdate, MonitoringDetailResponse
-from app.services import get_all_monitorings, get_monitoring_by_id, create_monitoring, update_monitoring
+from app.services import get_all_monitorings, get_monitoring_by_id, create_monitoring, update_monitoring, delete_monitoring
 
 router = APIRouter(prefix="/monitorings", tags=["Monitorings"])
 
@@ -31,3 +31,7 @@ def update_monitoring_endpoint(
 ):
     """Actualizar umbral o estado de un monitoreo"""
     return update_monitoring(db, monitoring_id, update_data)
+
+@router.delete("/{monitoring_id}")
+def delete_monitoring_endpoint(monitoring_id: int, db: Session = Depends(get_db)):
+    return delete_monitoring(db, monitoring_id)

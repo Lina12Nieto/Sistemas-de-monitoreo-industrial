@@ -86,7 +86,7 @@ function ZonesPage() {
           return (
             <div
               key={zone.id}
-              onClick={() => navigate(`/zones/${zone.id}`)}
+              onClick={() => navigate(`/zones/${zone.id}`, { state: { zone } })}
               className={`
                 relative bg-white rounded-2xl border p-5 cursor-pointer
                 transition-all duration-200 group overflow-hidden

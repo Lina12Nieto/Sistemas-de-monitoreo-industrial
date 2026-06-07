@@ -22,5 +22,6 @@ export const getMonitorings = (status = null) =>
   api.get('/monitorings/', { params: status ? { status } : {} })
 export const createMonitoring = (data) => api.post('/monitorings/', data)
 export const updateMonitoring = (id, data) => api.patch(`/monitorings/${id}`, data)
+export const deleteMonitoring = (id) => api.delete(`/monitorings/${id}`)
 
 export default api
