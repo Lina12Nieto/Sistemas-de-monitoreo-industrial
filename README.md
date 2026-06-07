@@ -319,7 +319,7 @@ DATABASE_URL=postgresql://usuario:password@host-render:5432/nombre_db?sslmode=re
 Archivo: `frontend/.env`
 
 ```env
-VITE_API_URL=http://
+VITE_API_URL=http://127.0.0.1:8000
 ```
 
 
