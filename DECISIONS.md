@@ -48,11 +48,6 @@ La logica de negocio queda en services/, por ejemplo:
 
 Esta separacion permite que el codigo sea mas claro y que sea mas sencillo agregar nuevas funcionalidades sin mezclar responsabilidades.
 
-## 4. Si tuvieras un día adicional para mejorar el proyecto, ¿qué funcionalidad o mejora técnica implementarías primero y por qué?
-
-## 4. Si tuvieras un día adicional para mejorar el proyecto, ¿qué funcionalidad o mejora técnica implementarías primero y por qué?
-
-Si tuviera un día adicional, implementaría primero un sistema de historial de lecturas para cada monitoreo.
 
 ## 4. Si tuvieras un día adicional para mejorar el proyecto, ¿qué funcionalidad o mejora técnica implementarías primero y por qué?
 
