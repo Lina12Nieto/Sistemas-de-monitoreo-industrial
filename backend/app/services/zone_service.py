@@ -24,7 +24,7 @@ def get_active_sensors_in_zone(db: Session, zone_id: int):
     monitorings = db.query(Monitoring).filter(
         and_(
             Monitoring.zone_id == zone_id,
-            Monitoring.status == MonitoringStatusEnum.activo
+            #Monitoring.status == MonitoringStatusEnum.activo
         )
     ).all()
 

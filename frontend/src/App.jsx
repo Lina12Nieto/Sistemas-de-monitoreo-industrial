@@ -3,6 +3,9 @@ import Navbar from './components/Navbar'
 import ZonesPage from './pages/ZonesPage'
 import ZoneDetailPage from './pages/ZoneDetailPage'
 import AssignSensorPage from './pages/AssignSensorPage'
+import CreateSensorPage from './pages/CreateSensorPage'
+import CreateZoneModal from './components/CreateZoneModal'
+import EditThresholdModal from './components/EditThresholdModal'
 
 function App() {
   return (
@@ -15,6 +18,9 @@ function App() {
             <Route path="/zones" element={<ZonesPage />} />
             <Route path="/zones/:id" element={<ZoneDetailPage />} />
             <Route path="/assign" element={<AssignSensorPage />} />
+            <Route path="/sensors/create" element={<CreateSensorPage />} />
+            <Route path="/zones/create" element={<CreateZoneModal />} />
+            <Route path="/monitorings/:id/edit" element={<EditThresholdModal />} />
           </Routes>
         </main>
       </div>

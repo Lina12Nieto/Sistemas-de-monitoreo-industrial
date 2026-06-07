@@ -10,10 +10,12 @@ const api = axios.create({
 // Zonas
 export const getZones = () => api.get('/zones/')
 export const getZoneById = (id) => api.get(`/zones/${id}/sensors`)
+export const createZone = (data) => api.post('/zones/', data)
 
 // Sensores
 export const getSensors = () => api.get('/sensors/')
 export const getSensorZones = (id) => api.get(`/sensors/${id}/zones`)
+export const createSensor = (data) => api.post('/sensors/', data)
 
 // Monitoreos
 export const getMonitorings = (status = null) =>

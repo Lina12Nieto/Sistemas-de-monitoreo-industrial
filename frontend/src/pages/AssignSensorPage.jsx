@@ -3,6 +3,12 @@ import { getSensors, getZones, createMonitoring } from '../services/api'
 import { PlusCircle, CheckCircle } from 'lucide-react'
 
 const READING_TYPES = ['temperatura', 'presion', 'vibracion', 'flujo']
+const RANGES = {
+  temperatura: { min: 0, max: 200, unit: '°C' },
+  presion:     { min: 0, max: 500, unit: 'bar' },
+  vibracion:   { min: 0, max: 50,  unit: 'mm/s' },
+  flujo:       { min: 0, max: 200, unit: 'L/min' }
+}
 
 function AssignSensorPage() {
   const [sensors, setSensors] = useState([])
@@ -41,6 +47,9 @@ function AssignSensorPage() {
     if (!form.reading_type) return 'Selecciona el tipo de lectura'
     if (!form.threshold_value || isNaN(form.threshold_value) || Number(form.threshold_value) <= 0)
       return 'El umbral debe ser un número mayor a 0'
+    const range = RANGES[form.reading_type]
+    if (Number(form.threshold_value) < range.min || Number(form.threshold_value) > range.max)
+      return `El umbral para ${form.reading_type} debe estar entre ${range.min} y ${range.max} ${range.unit}`
     return null
   }
 
@@ -115,18 +124,42 @@ function AssignSensorPage() {
             <select name="reading_type" value={form.reading_type} onChange={handleChange} className={inputClass}>
               <option value="">Selecciona el tipo</option>
               {READING_TYPES.map(t => (
-                <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
+                <option key={t} value={t}>
+                  {t.charAt(0).toUpperCase() + t.slice(1)} — {RANGES[t].min} a {RANGES[t].max} {RANGES[t].unit}
+                </option>
               ))}
             </select>
           </div>
-
+              
           <div>
-            <label className={labelClass}>Valor umbral</label>
+            <label className={labelClass}>
+              Valor umbral
+              {form.reading_type && (
+                <span className="text-blue-500 ml-1">
+                  (rango: {RANGES[form.reading_type].min} - {RANGES[form.reading_type].max} {RANGES[form.reading_type].unit})
+                </span>
+              )}
+            </label>
             <input
-              type="number" name="threshold_value" placeholder="Ej: 85"
-              value={form.threshold_value} onChange={handleChange}
-              className={inputClass} min="0" step="0.01"
+              type="number"
+              name="threshold_value"
+              placeholder={form.reading_type ? `Ej: ${RANGES[form.reading_type].max / 2}` : 'Selecciona tipo de lectura primero'}
+              value={form.threshold_value}
+              onChange={handleChange}
+              className={inputClass}
+              min={form.reading_type ? RANGES[form.reading_type].min : 0}
+              max={form.reading_type ? RANGES[form.reading_type].max : undefined}
+              step="0.01"
+              disabled={!form.reading_type}
             />
+            {form.reading_type && form.threshold_value && (
+              Number(form.threshold_value) > RANGES[form.reading_type].max ||
+              Number(form.threshold_value) < RANGES[form.reading_type].min
+            ) && (
+              <p className="text-red-500 text-xs mt-1">
+                ⚠ Valor fuera del rango permitido ({RANGES[form.reading_type].min} - {RANGES[form.reading_type].max} {RANGES[form.reading_type].unit})
+              </p>
+            )}
           </div>
 
           <div>

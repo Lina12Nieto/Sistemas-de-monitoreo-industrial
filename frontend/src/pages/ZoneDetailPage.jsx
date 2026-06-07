@@ -2,14 +2,16 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getZoneById } from '../services/api'
 import SensorCard from '../components/SensorCard'
+import EditThresholdModal from '../components/EditThresholdModal'
 import { ArrowLeft, MapPin, AlertTriangle } from 'lucide-react'
 
 function ZoneDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [monitorings, setMonitorings] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [loading, setLoading]         = useState(true)
+  const [error, setError]             = useState(null)
+  const [selected, setSelected]       = useState(null) // monitoring que se está editando
 
   useEffect(() => {
     getZoneById(id)
@@ -18,8 +20,15 @@ function ZoneDetailPage() {
       .finally(() => setLoading(false))
   }, [id])
 
+  // Actualiza el monitoring en el listado local sin recargar
+  const handleUpdated = (updated) => {
+    setMonitorings(prev =>
+      prev.map(m => m.id === updated.id ? updated : m)
+    )
+  }
+
   const alerts = monitorings.filter(m => m.is_alert)
-  const zone = monitorings[0]?.zone
+  const zone   = monitorings[0]?.zone
 
   if (loading) return (
     <div className="flex justify-center items-center h-64">
@@ -82,9 +91,21 @@ function ZoneDetailPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {monitorings.map(monitoring => (
-            <SensorCard key={monitoring.id} monitoring={monitoring} />
+            <SensorCard
+              key={monitoring.id}
+              monitoring={monitoring}
+              onEdit={() => setSelected(monitoring)}
+            />
           ))}
         </div>
+      )}
+
+      {selected && (
+        <EditThresholdModal
+          monitoring={selected}
+          onClose={() => setSelected(null)}
+          onUpdated={handleUpdated}
+        />
       )}
     </div>
   )

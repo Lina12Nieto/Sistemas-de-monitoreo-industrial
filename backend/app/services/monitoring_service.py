@@ -60,8 +60,13 @@ def create_monitoring(db: Session, monitoring_data: MonitoringCreate):
 def update_monitoring(db: Session, monitoring_id: int, update_data: MonitoringUpdate):
     """Actualiza umbral o estado de un monitoreo"""
     monitoring = get_monitoring_by_id(db, monitoring_id)
+    
     for key, value in update_data.dict(exclude_unset=True).items():
         setattr(monitoring, key, value)
+    
+    # Recalcular is_alert con los valores actualizados
+    monitoring.is_alert = monitoring.current_value > monitoring.threshold_value
+
     db.commit()
     db.refresh(monitoring)
     return monitoring
