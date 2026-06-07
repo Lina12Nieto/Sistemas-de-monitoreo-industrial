@@ -3,15 +3,17 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { getZoneById } from '../services/api'
 import SensorCard from '../components/SensorCard'
 import EditThresholdModal from '../components/EditThresholdModal'
-import { ArrowLeft, MapPin, AlertTriangle } from 'lucide-react'
+import AssignSensorModal from '../components/AssignSensorModal'
+import { ArrowLeft, MapPin, AlertTriangle, Plus } from 'lucide-react'
 
 function ZoneDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const [monitorings, setMonitorings] = useState([])
-  const [loading, setLoading]         = useState(true)
-  const [error, setError]             = useState(null)
-  const [selected, setSelected]       = useState(null) // monitoring que se está editando
+  const [monitorings, setMonitorings]   = useState([])
+  const [loading, setLoading]           = useState(true)
+  const [error, setError]               = useState(null)
+  const [selected, setSelected]         = useState(null)  // modal editar umbral
+  const [showAssign, setShowAssign]     = useState(false) // modal asignar sensor
 
   useEffect(() => {
     getZoneById(id)
@@ -20,11 +22,12 @@ function ZoneDetailPage() {
       .finally(() => setLoading(false))
   }, [id])
 
-  // Actualiza el monitoring en el listado local sin recargar
   const handleUpdated = (updated) => {
-    setMonitorings(prev =>
-      prev.map(m => m.id === updated.id ? updated : m)
-    )
+    setMonitorings(prev => prev.map(m => m.id === updated.id ? updated : m))
+  }
+
+  const handleAssigned = (newMonitoring) => {
+    setMonitorings(prev => [...prev, newMonitoring])
   }
 
   const alerts = monitorings.filter(m => m.is_alert)
@@ -54,14 +57,24 @@ function ZoneDetailPage() {
 
       {zone && (
         <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-blue-50 rounded-lg">
-              <MapPin size={18} className="text-blue-500" />
+          <div className="flex items-start justify-between">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 bg-blue-50 rounded-lg">
+                <MapPin size={18} className="text-blue-500" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-800">{zone.name}</h1>
+                <p className="text-sm text-gray-400">{zone.location}</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-800">{zone.name}</h1>
-              <p className="text-sm text-gray-400">{zone.location}</p>
-            </div>
+            {/* Botón asignar sensor */}
+            <button
+              onClick={() => setShowAssign(true)}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-xl shadow-sm transition-colors flex-shrink-0"
+            >
+              <Plus size={15} />
+              Asignar Sensor
+            </button>
           </div>
           {zone.description && (
             <p className="text-sm text-gray-500 mt-2">{zone.description}</p>
@@ -80,13 +93,13 @@ function ZoneDetailPage() {
 
       <div className="mb-4">
         <h2 className="text-base font-semibold text-gray-700">
-          Sensores activos ({monitorings.length})
+          Sensores ({monitorings.length})
         </h2>
       </div>
 
       {monitorings.length === 0 ? (
         <div className="text-center py-12 text-gray-400 text-sm">
-          No hay sensores activos en esta zona
+          No hay sensores asignados a esta zona
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -105,6 +118,15 @@ function ZoneDetailPage() {
           monitoring={selected}
           onClose={() => setSelected(null)}
           onUpdated={handleUpdated}
+        />
+      )}
+
+      {showAssign && zone && (
+        <AssignSensorModal
+          zoneId={parseInt(id)}
+          zoneName={zone.name}
+          onClose={() => setShowAssign(false)}
+          onAssigned={handleAssigned}
         />
       )}
     </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
+import { X, PlusCircle, CheckCircle } from 'lucide-react'
 import { getSensors, getZones, createMonitoring } from '../services/api'
-import { PlusCircle, CheckCircle } from 'lucide-react'
 
 const READING_TYPES = ['temperatura', 'presion', 'vibracion', 'flujo']
 const RANGES = {
@@ -10,28 +10,23 @@ const RANGES = {
   flujo:       { min: 0, max: 200, unit: 'L/min' }
 }
 
-function AssignSensorPage() {
+function AssignSensorModal({ zoneId, zoneName, onClose, onAssigned }) {
   const [sensors, setSensors] = useState([])
-  const [zones, setZones] = useState([])
   const [success, setSuccess] = useState(false)
-  const [error, setError] = useState(null)
+  const [error,   setError]   = useState(null)
   const [loading, setLoading] = useState(false)
 
   const [form, setForm] = useState({
-    sensor_id: '',
-    zone_id: '',
+    sensor_id:         '',
+    zone_id:           zoneId,   // pre-fijado
     installation_date: '',
-    reading_type: '',
-    threshold_value: '',
-    status: 'activo'
+    reading_type:      '',
+    threshold_value:   '',
+    status:            'activo'
   })
 
   useEffect(() => {
-    Promise.all([getSensors(), getZones()])
-      .then(([sensorsRes, zonesRes]) => {
-        setSensors(sensorsRes.data)
-        setZones(zonesRes.data)
-      })
+    getSensors().then(res => setSensors(res.data))
   }, [])
 
   const handleChange = (e) => {
@@ -41,10 +36,9 @@ function AssignSensorPage() {
   }
 
   const validate = () => {
-    if (!form.sensor_id) return 'Selecciona un sensor'
-    if (!form.zone_id) return 'Selecciona una zona'
+    if (!form.sensor_id)        return 'Selecciona un sensor'
     if (!form.installation_date) return 'Ingresa la fecha de instalación'
-    if (!form.reading_type) return 'Selecciona el tipo de lectura'
+    if (!form.reading_type)      return 'Selecciona el tipo de lectura'
     if (!form.threshold_value || isNaN(form.threshold_value) || Number(form.threshold_value) <= 0)
       return 'El umbral debe ser un número mayor a 0'
     const range = RANGES[form.reading_type]
@@ -59,17 +53,17 @@ function AssignSensorPage() {
 
     setLoading(true)
     try {
-      await createMonitoring({
+      const res = await createMonitoring({
         ...form,
-        sensor_id: parseInt(form.sensor_id),
-        zone_id: parseInt(form.zone_id),
+        sensor_id:       parseInt(form.sensor_id),
+        zone_id:         parseInt(form.zone_id),
         threshold_value: parseFloat(form.threshold_value)
       })
       setSuccess(true)
-      setForm({
-        sensor_id: '', zone_id: '', installation_date: '',
-        reading_type: '', threshold_value: '', status: 'activo'
-      })
+      setTimeout(() => {
+        onAssigned(res.data)
+        onClose()
+      }, 900)
     } catch (err) {
       setError(err.response?.data?.detail || 'Error al asignar el sensor')
     } finally {
@@ -77,18 +71,37 @@ function AssignSensorPage() {
     }
   }
 
-  const inputClass = "w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 bg-white"
-  const labelClass = "block text-xs font-medium text-gray-500 mb-1"
+  const inputClass = 'w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 bg-white'
+  const labelClass = 'block text-xs font-medium text-gray-500 mb-1'
 
   return (
-    <div className="max-w-lg mx-auto">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Asignar Sensor</h1>
-        <p className="text-gray-500 text-sm mt-1">Vincula un sensor a una zona de monitoreo</p>
-      </div>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+    >
+      <div className="bg-white rounded-2xl shadow-xl border border-gray-200 w-full max-w-md mx-4 overflow-hidden max-h-[90vh] flex flex-col">
 
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-        <div className="flex flex-col gap-4">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-blue-50 rounded-lg">
+              <PlusCircle size={16} className="text-blue-500" />
+            </div>
+            <div>
+              <h2 className="text-base font-semibold text-gray-800">Asignar Sensor</h2>
+              <p className="text-xs text-gray-400">{zoneName}</p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <X size={16} />
+          </button>
+        </div>
+
+        {/* Body — scrollable */}
+        <div className="px-6 py-5 flex flex-col gap-4 overflow-y-auto">
 
           <div>
             <label className={labelClass}>Sensor</label>
@@ -100,21 +113,21 @@ function AssignSensorPage() {
             </select>
           </div>
 
+          {/* Zona fija — solo informativo */}
           <div>
             <label className={labelClass}>Zona</label>
-            <select name="zone_id" value={form.zone_id} onChange={handleChange} className={inputClass}>
-              <option value="">Selecciona una zona</option>
-              {zones.map(z => (
-                <option key={z.id} value={z.id}>{z.name}</option>
-              ))}
-            </select>
+            <div className="w-full border border-gray-100 rounded-lg px-3 py-2 text-sm text-gray-400 bg-gray-50">
+              {zoneName}
+            </div>
           </div>
 
           <div>
             <label className={labelClass}>Fecha de instalación</label>
             <input
-              type="date" name="installation_date"
-              value={form.installation_date} onChange={handleChange}
+              type="date"
+              name="installation_date"
+              value={form.installation_date}
+              onChange={handleChange}
               className={inputClass}
             />
           </div>
@@ -130,7 +143,7 @@ function AssignSensorPage() {
               ))}
             </select>
           </div>
-              
+
           <div>
             <label className={labelClass}>
               Valor umbral
@@ -157,17 +170,31 @@ function AssignSensorPage() {
               Number(form.threshold_value) < RANGES[form.reading_type].min
             ) && (
               <p className="text-red-500 text-xs mt-1">
-                ⚠ Valor fuera del rango permitido ({RANGES[form.reading_type].min} - {RANGES[form.reading_type].max} {RANGES[form.reading_type].unit})
+                ⚠ Valor fuera del rango permitido
               </p>
             )}
           </div>
 
           <div>
             <label className={labelClass}>Estado inicial</label>
-            <select name="status" value={form.status} onChange={handleChange} className={inputClass}>
-              <option value="activo">Activo</option>
-              <option value="pausado">Pausado</option>
-            </select>
+            <div className="flex gap-2">
+              {['activo', 'pausado'].map(opt => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => { setForm({ ...form, status: opt }); setError(null) }}
+                  className={`flex-1 text-xs font-medium px-2 py-2 rounded-lg border transition-all capitalize ${
+                    form.status === opt
+                      ? opt === 'activo'
+                        ? 'text-green-600 bg-green-50 border-green-200 ring-2 ring-offset-1 ring-blue-300'
+                        : 'text-yellow-600 bg-yellow-50 border-yellow-200 ring-2 ring-offset-1 ring-blue-300'
+                      : 'border-gray-200 text-gray-400 hover:border-gray-300'
+                  }`}
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
           </div>
 
           {error && (
@@ -182,20 +209,28 @@ function AssignSensorPage() {
               Sensor asignado correctamente
             </div>
           )}
+        </div>
 
+        {/* Footer */}
+        <div className="px-6 py-4 border-t border-gray-100 flex gap-3 flex-shrink-0">
+          <button
+            onClick={onClose}
+            className="flex-1 border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium py-2.5 rounded-lg text-sm transition-colors"
+          >
+            Cancelar
+          </button>
           <button
             onClick={handleSubmit}
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-medium py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 transition-colors"
+            disabled={loading || success}
+            className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-medium py-2.5 rounded-lg text-sm flex items-center justify-center gap-2 transition-colors"
           >
-            <PlusCircle size={16} />
-            {loading ? 'Asignando...' : 'Asignar Sensor'}
+            <PlusCircle size={14} />
+            {loading ? 'Asignando...' : success ? 'Asignado ✓' : 'Asignar Sensor'}
           </button>
-
         </div>
       </div>
     </div>
   )
 }
 
-export default AssignSensorPage
+export default AssignSensorModal

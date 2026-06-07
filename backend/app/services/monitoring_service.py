@@ -35,11 +35,20 @@ def create_monitoring(db: Session, monitoring_data: MonitoringCreate):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Sensor con id {monitoring_data.sensor_id} no encontrado"
         )
-    if not db.query(Zone).filter(Zone.id == monitoring_data.zone_id).first():
+    
+    zone = db.query(Zone).filter(Zone.id == monitoring_data.zone_id).first()
+    if not zone:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Zona con id {monitoring_data.zone_id} no encontrada"
         )
+    # ← validación nueva
+    if zone.operational_status.value == 'inactivo':
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"No se pueden asignar sensores a la zona '{zone.name}' porque está inactiva"
+        )
+
     existing = db.query(Monitoring).filter(
         and_(
             Monitoring.sensor_id == monitoring_data.sensor_id,
@@ -51,6 +60,7 @@ def create_monitoring(db: Session, monitoring_data: MonitoringCreate):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"El sensor {monitoring_data.sensor_id} ya está asignado a la zona {monitoring_data.zone_id}"
         )
+
     db_monitoring = Monitoring(**monitoring_data.dict())
     db.add(db_monitoring)
     db.commit()

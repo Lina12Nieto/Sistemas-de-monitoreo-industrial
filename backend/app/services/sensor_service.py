@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import and_
 from fastapi import HTTPException, status
 from app.models import Sensor, Monitoring
 from app.schemas import SensorCreate
@@ -26,6 +27,17 @@ def get_zones_by_sensor(db: Session, sensor_id: int):
 
 def create_sensor(db: Session, sensor_data: SensorCreate):
     """Crea un nuevo sensor"""
+    existing = db.query(Sensor).filter(
+        and_(
+            Sensor.name == sensor_data.name,
+            Sensor.manufacturer == sensor_data.manufacturer
+        )
+    ).first()
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Ya existe un sensor '{sensor_data.name}' del fabricante '{sensor_data.manufacturer}'"
+        )
     db_sensor = Sensor(**sensor_data.dict())
     db.add(db_sensor)
     db.commit()

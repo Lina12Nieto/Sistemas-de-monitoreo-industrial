@@ -22,11 +22,8 @@ function Navbar() {
           <Link to="/zones" className={`text-sm font-medium pb-1 transition-all ${isActive('/zones')}`}>
             Zonas
           </Link>
-          <Link to="/sensors/create" className={`text-sm font-medium pb-1 transition-all ${isActive('/sensors/create')}`}>
-            Crear Sensor
-          </Link>
-          <Link to="/assign" className={`text-sm font-medium pb-1 transition-all ${isActive('/assign')}`}>
-            Asignar Sensor
+          <Link to="/sensors" className={`text-sm font-medium pb-1 transition-all ${isActive('/sensors')}`}>
+            Sensores
           </Link>
         </div>
       </div>
