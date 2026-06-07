@@ -5,7 +5,6 @@ from app.models import Sensor, Zone, Monitoring, MonitoringStatusEnum
 from app.schemas import MonitoringCreate, MonitoringUpdate
 
 def get_all_monitorings(db: Session, status_filter: str = None):
-    """Obtiene todos los monitoreos, opcionalmente filtrado por estado"""
     query = db.query(Monitoring)
     if status_filter:
         try:
@@ -14,9 +13,12 @@ def get_all_monitorings(db: Session, status_filter: str = None):
         except ValueError:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Estado inválido. Debe ser 'activo' o 'pausado'"
+                detail="Estado inválido. Debe ser 'activo' o 'pausado'"
             )
-    return query.all()
+    monitorings = query.all()
+    for m in monitorings:
+        m.is_alert = float(m.current_value) > float(m.threshold_value)
+    return monitorings
 
 def get_monitoring_by_id(db: Session, monitoring_id: int):
     """Obtiene un monitoreo por ID"""

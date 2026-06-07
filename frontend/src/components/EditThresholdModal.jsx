@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { X, SlidersHorizontal, CheckCircle } from 'lucide-react'
 import { updateMonitoring } from '../services/api'
+import { useAlerts } from '../context/AlertContext'
 
 const STATUS_OPTIONS = [
   { value: 'activo',  label: 'Activo',  color: 'text-green-600 bg-green-50 border-green-200' },
@@ -17,6 +18,7 @@ function EditThresholdModal({ monitoring, onClose, onUpdated }) {
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
   const isPaused = form.status === 'pausado'
+  const { refreshAlerts } = useAlerts()
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -50,6 +52,7 @@ function EditThresholdModal({ monitoring, onClose, onUpdated }) {
       setSuccess(true)
       setTimeout(() => {
         onUpdated(res.data)
+        refreshAlerts() 
         onClose()
       }, 900)
     } catch (err) {
