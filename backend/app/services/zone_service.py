@@ -24,7 +24,7 @@ def get_active_sensors_in_zone(db: Session, zone_id: int):
     monitorings = db.query(Monitoring).filter(
         and_(
             Monitoring.zone_id == zone_id,
-            #Monitoring.status == MonitoringStatusEnum.activo
+            Monitoring.status == MonitoringStatusEnum.activo
         )
     ).all()
 
@@ -32,6 +32,18 @@ def get_active_sensors_in_zone(db: Session, zone_id: int):
         m.is_alert = float(m.current_value) > float(m.threshold_value)
     return monitorings
 
+def get_sensors_in_zone(db: Session, zone_id: int):
+    """Obtiene todos los sensores de una zona activos y pausados, esto para visualizacion en el frontend"""
+    get_zone_by_id(db, zone_id)
+    monitorings = db.query(Monitoring).filter(
+        and_(
+            Monitoring.zone_id == zone_id
+        )
+    ).all()
+
+    for m in monitorings:
+        m.is_alert = float(m.current_value) > float(m.threshold_value)
+    return monitorings
 
 def count_active_sensors_in_zone(db: Session, zone_id: int) -> int:
     """Cuenta los sensores activos en una zona"""

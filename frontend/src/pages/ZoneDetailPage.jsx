@@ -12,8 +12,8 @@ function ZoneDetailPage() {
   const [monitorings, setMonitorings]   = useState([])
   const [loading, setLoading]           = useState(true)
   const [error, setError]               = useState(null)
-  const [selected, setSelected]         = useState(null)  // modal editar umbral
-  const [showAssign, setShowAssign]     = useState(false) // modal asignar sensor
+  const [selected, setSelected]         = useState(null)  
+  const [showAssign, setShowAssign]     = useState(false) 
 
   useEffect(() => {
     getZoneById(id)

@@ -9,7 +9,7 @@ const api = axios.create({
 
 // Zonas
 export const getZones = () => api.get('/zones/')
-export const getZoneById = (id) => api.get(`/zones/${id}/sensors`)
+export const getZoneById = (id) => api.get(`/zones/${id}/sensorsall`)
 export const createZone = (data) => api.post('/zones/', data)
 
 // Sensores

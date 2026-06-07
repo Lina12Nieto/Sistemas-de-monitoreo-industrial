@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas import ZoneResponse, ZoneWithActiveSensorsResponse, ZoneCreate
 from app.schemas.monitoring import MonitoringDetailResponse
-from app.services import get_all_zones, get_zone_by_id, get_active_sensors_in_zone, count_active_sensors_in_zone, create_zone
+from app.services import get_all_zones, get_zone_by_id, get_active_sensors_in_zone, count_active_sensors_in_zone, create_zone, get_sensors_in_zone 
 
 router = APIRouter(prefix="/zones", tags=["Zones"])
 
@@ -23,6 +23,12 @@ def list_zones(db: Session = Depends(get_db)):
 def list_sensors_in_zone(zone_id: int, db: Session = Depends(get_db)):
     """Ver sensores activos en una zona"""
     return get_active_sensors_in_zone(db, zone_id)
+
+
+@router.get("/{zone_id}/sensorsall", response_model=list[MonitoringDetailResponse])
+def list_all_sensors_in_zone(zone_id: int, db: Session = Depends(get_db)):
+    """Ver todos los sensores en una zona"""
+    return get_sensors_in_zone(db, zone_id)
 
 @router.post("/", response_model=ZoneResponse, status_code=201)
 def create_zone_endpoint(
