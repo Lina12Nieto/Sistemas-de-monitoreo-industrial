@@ -54,7 +54,11 @@ Esta separacion permite que el codigo sea mas claro y que sea mas sencillo agreg
 
 Si tuviera un día adicional, implementaría primero un sistema de historial de lecturas para cada monitoreo.
 
-hoy el valor actual de cada sensor se actualiza manualmente. En producción, Esta mejora sería importante porque actualmente el sistema muestra las alertas dentro de la aplicación, pero en un entorno industrial real una alerta crítica debe llegar rápidamente a la persona responsable, incluso si no está mirando el dashboard en ese momento.
+## 4. Si tuvieras un día adicional para mejorar el proyecto, ¿qué funcionalidad o mejora técnica implementarías primero y por qué?
+
+Si tuviera un día adicional, implementaría primero un sistema de notidicaciones automatizadas.
+
+Hoy el valor actual de cada sensor se actualiza manualmente. esta seria una funcionalidad porque actualmente el sistema muestra las alertas dentro de la aplicación, pero en un entorno industrial real una alerta crítica debe llegar rápidamente a la persona responsable, incluso si no está mirando el dashboard en ese momento.
 cada sensor enviaría su lectura automáticamente cada ciertos segundos. Para demostrarlo en una prueba sin hardware físico, crearía un script que simule ese comportamiento — generando valores aleatorios dentro del rango de cada tipo de sensor y enviándolos al sistema periódicamente, igual que lo haría un sensor real. Así el dashboard se actualizaría solo, las alertas aparecerían y desaparecerían en tiempo real, y el sistema podría ver el sistema funcionando como lo haría en una planta industrial real. Adicioanal a esto haria un sistema de notificaciones no solo desde el dashboard del sistema sino que por medio de mensajes via sms, correo o whatsapp.Teniendo en cuenta esto, debería añadir un registro de usuarios o contactos responsables para que se puedan enviar las notificaciones y asi esten informados si ocurre un evento "Superar el valor del umbral en una zona" sin estar visualizando siempre el sistema.  
 
-También implemnetaria roles básicos dentro del sistema, como administrador, supervisor y operador. El administrador podría gestionar sensores, zonasy configuraciones de alerta; el supervisor podría recibir notificaciones y revisar el estado de las zonas asignadas; y el operador podría consultar el dashboard y actualizar estados de monitoreo.
+También implementaria roles básicos dentro del sistema, como administrador, supervisor y operador. El administrador podría gestionar sensores, zonasy configuraciones de alerta; el supervisor podría recibir notificaciones y revisar el estado de las zonas asignadas; y el operador podría consultar el dashboard y actualizar estados de monitoreo.

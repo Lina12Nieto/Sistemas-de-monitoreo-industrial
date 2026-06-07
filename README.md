@@ -290,12 +290,16 @@ http://localhost:5173
 | `GET` | `/sensors/` | Lista todos los sensores. |
 | `POST` | `/sensors/` | Crea un sensor. |
 | `GET` | `/sensors/{sensor_id}/zones` | Lista las zonas monitoreadas por un sensor. |
-| `GET` | ``/zones/{zone_id}/sensors``| Lista las zonas con conteo de sensores activos. |
+| `DELETE` | `/sensors/{sensor_id}` | Elimina un sensor. |
+| `GET` | `/zones/` | Lista todas las zonas con conteo de sensores activos. |
 | `POST` | `/zones/` | Crea una zona. |
-| `GET` | `/zones/{zone_id}/sensorsall` | Lista los sensores de una zona. |
+| `GET` | `/zones/{zone_id}/sensors` | Lista los sensores activos de una zona. |
+| `GET` | `/zones/{zone_id}/sensorsall` | Lista todos los sensores de una zona, activos y pausados. |
+| `DELETE` | `/zones/{zone_id}` | Elimina una zona. |
 | `GET` | `/monitorings/` | Lista monitoreos. Permite filtro opcional por estado. |
 | `POST` | `/monitorings/` | Asigna un sensor a una zona. |
 | `PATCH` | `/monitorings/{monitoring_id}` | Actualiza umbral, valor actual o estado. |
+| `DELETE` | `/monitorings/{monitoring_id}` | Elimina un monitoreo. |
 
 Ejemplo de filtro por estado:
 
