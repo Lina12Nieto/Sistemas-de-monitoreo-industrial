@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas import SensorResponse, SensorCreate
 from app.schemas.monitoring import MonitoringDetailResponse
-from app.services import get_all_sensors, get_sensor_by_id, get_zones_by_sensor, create_sensor
+from app.services import get_all_sensors, get_sensor_by_id, get_zones_by_sensor, create_sensor, delete_sensor
 
 router = APIRouter(prefix="/sensors", tags=["Sensors"])
 

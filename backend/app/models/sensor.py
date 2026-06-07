@@ -1,8 +1,8 @@
 from sqlalchemy import Column, Integer, String, Date, DateTime, Enum
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
 from app.database import Base
 from app.models.enums import SensorTypeEnum
+from app.utils.timezone import now_colombia
 
 class Sensor(Base):
     """
@@ -15,6 +15,6 @@ class Sensor(Base):
     type = Column(Enum(SensorTypeEnum), nullable=False)
     manufacturer = Column(String(100), nullable=False)
     manufacturing_date = Column(Date, nullable=False)
-    created_at = Column(DateTime, nullable=False, default=func.now())
+    created_at = Column(DateTime, nullable=False, default=now_colombia)
 
     monitorings = relationship("Monitoring", back_populates="sensor", cascade="all, delete-orphan")
